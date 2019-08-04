@@ -59,10 +59,11 @@ class CircularDoublyLinkedList:
 
                 break
 
+print("Usuarios: ")
 l = CircularDoublyLinkedList()
-l.add_backward(1)
-l.add_backward(2)
-l.add_backward(3)
+l.add_backward("Fernando")
+l.add_backward("Maria")
+l.add_backward("Veronica")
 l.print_list_forward()
 #print("")
 l.print_list_backward()

@@ -18,6 +18,7 @@ class Cola:
     def empty(self):
         return self.datos == []
 
+print("Scoreboard: ")
 c = Cola()
 c.enqueue(1)
 c.enqueue(2)
