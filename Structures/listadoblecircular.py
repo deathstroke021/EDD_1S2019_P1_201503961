@@ -59,7 +59,34 @@ class CircularDoublyLinkedList:
 
                 break
 
-print("Usuarios: ")
+    def print_head(self):
+        aux = self.head
+        return aux.dato
+
+    def print_next(self):
+        aux = self.head.next
+        return aux.dato
+        self.head = aux
+        return self.hed.dato
+
+        """if estado == 0:
+            aux = self.head
+            return aux.dato
+        elif estado == 1:
+            aux = self.head.next
+            return aux.dato
+        elif estado == 2:
+            aux = self.head.previous
+            return aux.dato"""
+
+        """aux = self.head
+        while aux:
+            print(aux.dato)
+            aux = aux.next
+            if aux == self.head:
+                break"""
+
+"""print("Usuarios: ")
 l = CircularDoublyLinkedList()
 l.add_backward("Fernando")
 l.add_backward("Maria")
@@ -67,3 +94,5 @@ l.add_backward("Veronica")
 l.print_list_forward()
 #print("")
 l.print_list_backward()
+print(l.print_head())
+print(l.print_next())"""
