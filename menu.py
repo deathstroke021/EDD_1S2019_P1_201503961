@@ -73,7 +73,7 @@ class MenuDisplay:
                     self.print_center("Mostrando reportes")
                     self.stdscr.getch()
                 elif current_row == 4:
-                    self.print_center("Se cargo archivo csv, presione ENTER para continuar")
+                    self.print_center("Se cargo archivo csv, presione ENTER para salir")
                     self.bulk_loading()
                     l.print_list_forward()
                     #l.print_list_backward()
