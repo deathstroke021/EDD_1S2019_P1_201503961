@@ -1,0 +1,10 @@
+digraph firsGraph{
+node [shape=record];
+rankdir=LR;
+node0 [label=" Fernando "  ];
+node0 -> node1;
+node1 [label=" Maria "  ];
+node1 -> node2;
+node2 [label=" Veronica "  ];
+node2 -> node3;
+}

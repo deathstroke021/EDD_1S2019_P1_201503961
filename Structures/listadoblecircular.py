@@ -1,3 +1,6 @@
+import os
+import subprocess
+
 class Nodo:
     def __init__(self, dato):
         self.dato = dato
@@ -69,6 +72,39 @@ class CircularDoublyLinkedList:
         self.head = aux
         return self.hed.dato
 
+    def graphviz(self):
+        if self.head is None:
+            print("Lista vacia")
+        else:
+            file = open("Circulardoublylinkedlist.dot", "w")
+            file.write('digraph firsGraph{\n')
+            file.write('node [shape=record];\n')
+            file.write('rankdir=LR;\n')
+            aux = self.head
+            count = 0
+            while aux:
+                #print(aux.dato,end='')
+                #print('->',end='')
+                file.write('node{} [label=\" {} \"  ];\n'.format(count, aux.dato))
+                count+=1
+                file.write('node{} -> node{};\n'.format(count-1, count))
+                aux = aux.next
+                if aux == self.head:
+                    #print(aux.dato)
+                    #file.write('node{} [label=\" {} \"  ];\n'.format(count, aux.dato))
+                    file.write('}')
+                    file.close()
+
+                    break
+
+            os.system('dot Circulardoublylinkedlist.dot -Tpng -o Circulardoublylinkedlist.png')
+            process = subprocess.Popen(command, stdout=tempFile, shell=True)
+            subprocess.check_call(['open','Circulardoublylinkedlist.png'])
+            print("Se creo el archivo txt correctamente")
+
+
+
+
         """if estado == 0:
             aux = self.head
             return aux.dato
@@ -86,7 +122,7 @@ class CircularDoublyLinkedList:
             if aux == self.head:
                 break"""
 
-"""print("Usuarios: ")
+print("Usuarios: ")
 l = CircularDoublyLinkedList()
 l.add_backward("Fernando")
 l.add_backward("Maria")
@@ -95,4 +131,5 @@ l.print_list_forward()
 #print("")
 l.print_list_backward()
 print(l.print_head())
-print(l.print_next())"""
+print(l.print_next())
+l.graphviz()

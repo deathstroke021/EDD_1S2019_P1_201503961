@@ -3,15 +3,22 @@ from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN #import special KEYS fr
 import time
 import random
 
+startlenght = 3
+growlenght = 1
+
+speed ={"Easy": 0.1, "Medium": 0.06, "Hard": 0.04}
+difficulty = "Medium"
+acceleration = True
+
 stdscr = curses.initscr() #initialize console
 stdscr.keypad(1)
 dims = stdscr.getmaxyx() #ventana
 
 def game():
-
+    stdscr.clear()
     stdscr.nodelay(1)
     head = [1,1]
-    body = [head[:]]*3
+    body = [head[:]]*startlenght
 
 
     stdscr.border()
@@ -63,11 +70,130 @@ def game():
         body[0] = head[:]
 
         if stdscr.inch(head[0],head[1]) != ord(' '):
-            gameover = True
+            if stdscr.inch(head[0],head[1]) == ord('+'):
+                foodmade = False
+                for z in range(growlenght):
+                    body.append(body[-1]) # aumentar snake
+                    #body.remove(body[-1]) disminuir snake
+            else:
+                gameover = True # terminar juego
 
         stdscr.move(dims[0]-1, dims[1]-1)
         stdscr.refresh() # refrecar pantalla
-        time.sleep(0.1)
 
-game()
+        if not acceleration: # velocidad del juego
+            time.sleep(speed[difficulty])
+        else:
+            time.sleep(15.*speed[difficulty]/len(body))
+
+
+    stdscr.clear() # mensaje gameover
+    stdscr.nodelay(0)
+    message1 = "Game Over"
+    message2 = "You got " + str(len(body)-3)+ " points"
+    #message2 = "You got " + str((len(body)-startlenght)/growlenght) + " points"
+    message3= "Press Space to play again"
+    message4= "Press Enter to quit"
+    message5= "Press M to go to the menu"
+    stdscr.addstr(int(dims[0]/2-2), int((dims[1]-len(message1))/2), message1)
+    stdscr.addstr(int(dims[0]/2-1), int((dims[1]-len(message2))/2), message2)
+    stdscr.addstr(int(dims[0]/2), int((dims[1]-len(message3))/2), message3)
+    stdscr.addstr(int(dims[0]/2+1), int((dims[1]-len(message4))/2), message4)
+    stdscr.addstr(int(dims[0]/2+2), int((dims[1]-len(message5))/2), message5)
+    stdscr.refresh()
+    q = 0
+    while q not in [32,10,77,109]:
+        q = stdscr.getch()
+    if q == 32:
+        game()
+    elif q in [77,109]:
+        stdscr.clear()
+        menu()
+#game()
+
+def menu(): # menu snake
+    stdscr.clear()
+    stdscr.nodelay(0)
+    selection = -1
+    option = 0
+    while selection < 0:
+        graphics =[0]*5
+        graphics[option] = curses.A_REVERSE
+        stdscr.addstr(0,int(dims[1]/2-7),"Snake Reloaded")
+        stdscr.addstr(int(dims[0]/2-2), int(dims[1]/2-2), "Play", graphics[0])
+        stdscr.addstr(int(dims[0]/2-1), int(dims[1]/2-6), "Instructions", graphics[1])
+        stdscr.addstr(int(dims[0]/2), int(dims[1]/2-6), "Game options", graphics[2])
+        stdscr.addstr(int(dims[0]/2+1), int(dims[1]/2-5), "High Scores", graphics[3])
+        stdscr.addstr(int(dims[0]/2+2), int(dims[1]/2-2), "Exit", graphics[4])
+        stdscr.refresh()
+        action = stdscr.getch()
+        if action == curses.KEY_UP:
+            option = (option -1) %5
+        elif action == curses.KEY_DOWN:
+            option = (option + 1) %5
+        elif action == ord("\n"):
+            selection = option
+    if selection == 0:
+        game()
+    elif selection == 1:
+        instructions()
+    elif selection == 2:
+        gameoptions()
+
+
+def instructions():
+    stdscr.clear()
+    stdscr.nodelay(0)
+    lines = ['Use the arrow keys to move', 'Don\'t run into the wall or the snake', '', 'Press Any Key to go Back']
+    for z in range(len(lines)):
+        stdscr.addstr(int((dims[0]-len(lines))/2 +z), int((dims[1]-len(lines[z]))/2), lines[z])
+    stdscr.refresh()
+    stdscr.getch()
+    menu()
+
+def gameoptions():
+    global startlenght, growlenght, difficulty, acceleration
+    stdscr.clear()
+    selection = -1
+    option = 0
+    while selection < 4:
+        stdscr.clear()
+        graphics =[0]*5
+        graphics[option] = curses.A_REVERSE
+        strings = ["Starting snake lenght: " +str(startlenght), "Snake Grown rate: " +str(growlenght), "Difficulty: " +difficulty, "Aceleration:" +str(acceleration), "Exit"]
+        for z in range(len(strings)):
+            stdscr.addstr(int((dims[0]-len(strings))/2 +z), int((dims[1]-len(strings[z]))/2), strings[z], graphics[z])
+        stdscr.refresh()
+        action = stdscr.getch()
+        if action == curses.KEY_UP:
+            option = (option -1) %5
+        elif action == curses.KEY_DOWN:
+            option = (option + 1) %5
+        elif action == ord('\n'):
+            selection = option
+        elif action == curses.KEY_RIGHT: # cambiar tamaño del snake
+            if option == 0 and startlenght < 20:
+                startlenght += 1
+            elif option == 1 and growlenght < 10:
+                growlenght +=1
+        elif action == curses.KEY_LEFT: # cambiar tamaño del snake
+            if option == 0 and startlenght > 2:
+                startlenght -= 1
+            elif option == 1 and growlenght > 1:
+                growlenght -=1
+        if selection == 3: # cambiar dificultad del juego
+            acceleration = not acceleration
+        elif selection == 2:
+            if difficulty == "Easy":
+                difficulty = "Medium"
+            elif difficulty == "Medium":
+                difficulty = "Hard"
+            else:
+                difficulty = "Easy"
+        if selection < 4:
+            selection = -1
+
+    menu()
+
+menu()
 curses.endwin() #return terminal to previous state
