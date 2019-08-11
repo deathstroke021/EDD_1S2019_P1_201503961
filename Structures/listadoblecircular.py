@@ -1,3 +1,4 @@
+import csv
 import os
 import subprocess
 
@@ -121,15 +122,16 @@ class CircularDoublyLinkedList:
             aux = aux.next
             if aux == self.head:
                 break"""
-
+"""
 print("Usuarios: ")
 l = CircularDoublyLinkedList()
-l.add_backward("Fernando")
-l.add_backward("Maria")
-l.add_backward("Veronica")
+#l.add_backward("Fernando")
+#l.add_backward("Maria")
+#l.add_backward("Veronica")
+l.bulk_loading("Usuarios.csv")
 l.print_list_forward()
-#print("")
-l.print_list_backward()
+#l.print_list_backward()
 print(l.print_head())
 print(l.print_next())
-l.graphviz()
+#l.graphviz()
+"""

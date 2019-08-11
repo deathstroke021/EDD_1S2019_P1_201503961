@@ -2,14 +2,19 @@ import curses #import the curses library
 from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN #import special KEYS from the curses library
 import time
 import random
+from Structures.listadoblecircular import CircularDoublyLinkedList
+import csv
 
 startlenght = 3
 growlenght = 1
 score = 0
+level = 1
 
-speed ={"Easy": 0.1, "Medium": 0.06, "Hard": 0.04}
-difficulty = "Medium"
-acceleration = True
+#speed ={"Easy": 0.1, "Medium": 0.06, "Hard": 0.04}
+speed ={"Easy": 0.2, "Medium": 0.1, "Hard": 0.05}
+difficulty = "Easy"
+acceleration = False
+l = CircularDoublyLinkedList()
 
 
 
@@ -25,7 +30,7 @@ def game():
 
 
     stdscr.border()
-    stdscr.addstr(0,int(dims[1]/2-7),"User:  Score:0 Nivel:1")
+    stdscr.addstr(0,int(dims[1]/2-11),"User:  Score:0 Nivel:1")
 
     direction = 0
     gameover = False
@@ -41,7 +46,7 @@ def game():
         while not foodmade: # food
             y, x = random.randrange(1, dims[0]-1), random.randrange(1, dims[1]-1) #random en coordenads y,x
             type = random.randint(0,100)
-            if type <=50:
+            if type <=20:
                 type_food = 0
                 if stdscr.inch(y,x) == ord(' '):
                     foodmade = True
@@ -85,18 +90,58 @@ def game():
 
         if stdscr.inch(head[0],head[1]) != ord(' '):
             global score
+            global level
+            global difficulty
             if stdscr.inch(head[0],head[1]) == ord('+'):
                 foodmade = False
                 score = 1 + score
-                stdscr.addstr(0,int(dims[1]/2-7),"User:  Score:" +str(score)+" Nivel: ")
-                stdscr.refresh()
+                if score == 15 and level == 1:
+                    difficulty = "Medium"
+                    level = level + 1
+                    stdscr.addstr(0,int(dims[1]/2-11),"User:  Score:" +str(score)+" Nivel: "+str(level))
+                    stdscr.refresh()
+                elif score == 30 and level == 2:
+                    difficulty = "Hard"
+                    level = level + 1
+                    stdscr.addstr(0,int(dims[1]/2-11),"User:  Score:" +str(score)+" Nivel: "+str(level))
+                    stdscr.refresh()
+                elif score == 45:
+                    stdscr.clear() # mensaje gamewin
+                    stdscr.nodelay(0)
+                    message1 = "You win!!!"
+                    message2 = "You got " + str(str(score))+ " points"
+                    #message2 = "You got " + str((len(body)-startlenght)/growlenght) + " points"
+                    message3= "Press Space to play again"
+                    message4= "Press Enter to quit"
+                    message5= "Press M to go to the menu"
+                    stdscr.addstr(int(dims[0]/2-2), int((dims[1]-len(message1))/2), message1)
+                    stdscr.addstr(int(dims[0]/2-1), int((dims[1]-len(message2))/2), message2)
+                    stdscr.addstr(int(dims[0]/2), int((dims[1]-len(message3))/2), message3)
+                    stdscr.addstr(int(dims[0]/2+1), int((dims[1]-len(message4))/2), message4)
+                    stdscr.addstr(int(dims[0]/2+2), int((dims[1]-len(message5))/2), message5)
+                    stdscr.refresh()
+                    q = 0
+                    while q not in [32,10,77,109]:
+                        q = stdscr.getch()
+                    if q == 32:
+                        score = 0
+                        level = 1
+                        difficulty = "Easy"
+                        game()
+                    elif q in [77,109]:
+                        stdscr.clear()
+                        menu()
+                else:
+                    stdscr.addstr(0,int(dims[1]/2-11),"User:  Score:" +str(score)+" Nivel: "+str(level))
+                    stdscr.refresh()
+
                 for z in range(growlenght):
                     body.append(body[-1]) # aumentar snake
 
-            elif stdscr.inch(head[0],head[1]) == ord('*'):
+            elif stdscr.inch(head[0],head[1]) == ord('*') and len(body) > 3:
                 foodmade = False
                 score = score - 1
-                stdscr.addstr(0,int(dims[1]/2-7),"User:  Score:" +str(score)+" Nivel: ")
+                stdscr.addstr(0,int(dims[1]/2-11),"User:  Score:" +str(score)+" Nivel: " +str(level))
                 stdscr.refresh()
                 for z in range(growlenght):
                     y=[]
@@ -121,11 +166,11 @@ def game():
                         x.append(precoorx[count2])
                         count2 +=1
 
-                    print(coor)
+                    #print(coor)
 
-                    print(int(''.join(y)))
+                    #print(int(''.join(y)))
 
-                    print(int(''.join(x)[::-1]))
+                    #print(int(''.join(x)[::-1]))
 
                     yc= int(''.join(y))
 
@@ -134,9 +179,13 @@ def game():
                     stdscr.addch(yc, xc, ' ')
 
                     body.remove(body[-1]) # disminuir snake
+            elif stdscr.inch(head[0],head[1]) == ord('*') and len(body) <= 3:
+                foodmade = False
             else:
                 gameover = True # terminar juego
                 score = 0
+                level = 1
+                difficulty = "Easy"
 
         stdscr.move(dims[0]-1, dims[1]-1)
         stdscr.refresh() # refrecar pantalla
@@ -200,6 +249,8 @@ def menu(): # menu snake
         instructions()
     elif selection == 2:
         gameoptions()
+    elif selection == 4:
+        bulk_loading_option()
 
 
 def instructions():
@@ -211,6 +262,30 @@ def instructions():
     stdscr.refresh()
     stdscr.getch()
     menu()
+
+def bulk_loading_option():
+    stdscr.clear()
+    stdscr.nodelay(0)
+    stdscr.addstr(int(dims[0]/2-2), int(dims[1]/2-15),"Ingrese nombre de archivo csv:")
+    stdscr.addstr(int(dims[0]/2+10), int(dims[1]/2-15),"Presione ENTER para continuar")
+    stdscr.refresh()
+    #stdscr.getch()
+    curses.echo()
+    dato = stdscr.getstr(int(dims[0]/2), int(dims[1]/2-8), 16)
+    archivo = dato.decode("utf-8")
+
+    bulk_loading(archivo)
+    l.print_list_forward()
+
+    menu()
+
+def bulk_loading(archivo):
+    with open(archivo) as csvfile:
+        reader = csv.DictReader(csvfile)
+
+        for row in reader:
+            l.add_backward(row['Usuario'])
+            #print(row)
 
 def gameoptions():
     global startlenght, growlenght, difficulty, acceleration
