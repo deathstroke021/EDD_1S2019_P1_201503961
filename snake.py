@@ -5,10 +5,13 @@ import random
 
 startlenght = 3
 growlenght = 1
+score = 0
 
 speed ={"Easy": 0.1, "Medium": 0.06, "Hard": 0.04}
 difficulty = "Medium"
 acceleration = True
+
+
 
 stdscr = curses.initscr() #initialize console
 stdscr.keypad(1)
@@ -22,6 +25,7 @@ def game():
 
 
     stdscr.border()
+    stdscr.addstr(0,int(dims[1]/2-7),"User:  Score:0 Nivel:1")
 
     direction = 0
     gameover = False
@@ -33,11 +37,21 @@ def game():
         #print(head) coordenadas cabeza de la serpiente
         #print(body) coordenadas snake
 
+
         while not foodmade: # food
             y, x = random.randrange(1, dims[0]-1), random.randrange(1, dims[1]-1) #random en coordenads y,x
-            if stdscr.inch(y,x) == ord(' '):
-                foodmade = True
-                stdscr.addch(y, x, ord('+'))
+            type = random.randint(0,100)
+            if type <=50:
+                type_food = 0
+                if stdscr.inch(y,x) == ord(' '):
+                    foodmade = True
+                    stdscr.addch(y, x, ord('*'))
+            else:
+                type_food = 1
+                if stdscr.inch(y,x) == ord(' '):
+                    foodmade = True
+                    stdscr.addch(y, x, ord('+'))
+
 
         if deadcell not in body:
             stdscr.addch(deadcell[0], deadcell[1], ' ')
@@ -70,13 +84,59 @@ def game():
         body[0] = head[:]
 
         if stdscr.inch(head[0],head[1]) != ord(' '):
+            global score
             if stdscr.inch(head[0],head[1]) == ord('+'):
                 foodmade = False
+                score = 1 + score
+                stdscr.addstr(0,int(dims[1]/2-7),"User:  Score:" +str(score)+" Nivel: ")
+                stdscr.refresh()
                 for z in range(growlenght):
                     body.append(body[-1]) # aumentar snake
-                    #body.remove(body[-1]) disminuir snake
+
+            elif stdscr.inch(head[0],head[1]) == ord('*'):
+                foodmade = False
+                score = score - 1
+                stdscr.addstr(0,int(dims[1]/2-7),"User:  Score:" +str(score)+" Nivel: ")
+                stdscr.refresh()
+                for z in range(growlenght):
+                    y=[]
+                    x=[]
+                    coor= str(body[-1])
+                    precoory = coor.lstrip("[")
+                    count = 0
+
+                    while (precoory[count] is not ","):
+                        #print(precoory[count])
+                        y.append(precoory[count])
+                        count +=1
+
+                    coorinvertida = coor[::-1]
+                    #print(coorinvertida)
+                    precoorx = coorinvertida.lstrip("]")
+                    #print(precoorx)
+                    count2 = 0
+
+                    while (precoorx[count2] is not ","):
+                        #print(precoorx[count2])
+                        x.append(precoorx[count2])
+                        count2 +=1
+
+                    print(coor)
+
+                    print(int(''.join(y)))
+
+                    print(int(''.join(x)[::-1]))
+
+                    yc= int(''.join(y))
+
+                    xc= int(''.join(x)[::-1])
+
+                    stdscr.addch(yc, xc, ' ')
+
+                    body.remove(body[-1]) # disminuir snake
             else:
                 gameover = True # terminar juego
+                score = 0
 
         stdscr.move(dims[0]-1, dims[1]-1)
         stdscr.refresh() # refrecar pantalla
@@ -117,20 +177,21 @@ def menu(): # menu snake
     selection = -1
     option = 0
     while selection < 0:
-        graphics =[0]*5
+        graphics =[0]*6
         graphics[option] = curses.A_REVERSE
         stdscr.addstr(0,int(dims[1]/2-7),"Snake Reloaded")
-        stdscr.addstr(int(dims[0]/2-2), int(dims[1]/2-2), "Play", graphics[0])
-        stdscr.addstr(int(dims[0]/2-1), int(dims[1]/2-6), "Instructions", graphics[1])
-        stdscr.addstr(int(dims[0]/2), int(dims[1]/2-6), "Game options", graphics[2])
-        stdscr.addstr(int(dims[0]/2+1), int(dims[1]/2-5), "High Scores", graphics[3])
-        stdscr.addstr(int(dims[0]/2+2), int(dims[1]/2-2), "Exit", graphics[4])
+        stdscr.addstr(int(dims[0]/2-3), int(dims[1]/2-2), "Play", graphics[0])
+        stdscr.addstr(int(dims[0]/2-2), int(dims[1]/2-5), "Scoreboard", graphics[1])
+        stdscr.addstr(int(dims[0]/2-1), int(dims[1]/2-7), "User Selection", graphics[2])
+        stdscr.addstr(int(dims[0]/2), int(dims[1]/2-4), "Reports", graphics[3])
+        stdscr.addstr(int(dims[0]/2+1), int(dims[1]/2-6), "Bulk Loading", graphics[4])
+        stdscr.addstr(int(dims[0]/2+2), int(dims[1]/2-2), "Exit", graphics[5])
         stdscr.refresh()
         action = stdscr.getch()
         if action == curses.KEY_UP:
-            option = (option -1) %5
+            option = (option -1) %6
         elif action == curses.KEY_DOWN:
-            option = (option + 1) %5
+            option = (option + 1) %6
         elif action == ord("\n"):
             selection = option
     if selection == 0:
