@@ -63,15 +63,47 @@ class CircularDoublyLinkedList:
 
                 break
 
-    def print_head(self):
+    def buscar(self, dato):
+        aux = self.head
+        while aux:
+            if aux.dato == dato:
+                return True
+            else:
+                aux = aux.next
+                if aux == self.head:
+                    return false
+
+    def get_head(self):
         aux = self.head
         return aux.dato
 
-    def print_next(self):
+    def get_next(self):
         aux = self.head.next
         return aux.dato
-        self.head = aux
-        return self.hed.dato
+
+    def get_previous(self):
+        aux = self.head.previous
+        return aux.dato
+
+    def users(self, indice):
+        usuarios = []
+        aux = self.head
+        while aux:
+            usuarios.append(aux.dato)
+            aux = aux.next
+            if aux == self.head:
+                break
+        return usuarios[indice]
+
+    def users_len(self):
+        usuarios = []
+        aux = self.head
+        while aux:
+            usuarios.append(aux.dato)
+            aux = aux.next
+            if aux == self.head:
+                break
+        return len(usuarios)
 
     def graphviz(self):
         if self.head is None:
@@ -104,8 +136,6 @@ class CircularDoublyLinkedList:
             print("Se creo el archivo txt correctamente")
 
 
-
-
         """if estado == 0:
             aux = self.head
             return aux.dato
@@ -125,13 +155,19 @@ class CircularDoublyLinkedList:
 """
 print("Usuarios: ")
 l = CircularDoublyLinkedList()
-#l.add_backward("Fernando")
-#l.add_backward("Maria")
-#l.add_backward("Veronica")
-l.bulk_loading("Usuarios.csv")
+l.add_backward("Fernando")
+l.add_backward("Maria")
+l.add_backward("Veronica")
+#l.bulk_loading("Usuarios.csv")
 l.print_list_forward()
 #l.print_list_backward()
-print(l.print_head())
-print(l.print_next())
+#print(l.print_head())
+#print(l.print_next())
 #l.graphviz()
-"""
+
+print(l.users(0))
+print(l.users_len())
+l.add_backward("Rocio")
+l.print_list_forward()
+print(l.users(3))
+print(l.users_len())"""

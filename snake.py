@@ -16,7 +16,7 @@ difficulty = "Easy"
 acceleration = False
 l = CircularDoublyLinkedList()
 
-
+indice = 0
 
 stdscr = curses.initscr() #initialize console
 stdscr.keypad(1)
@@ -248,6 +248,8 @@ def menu(): # menu snake
     elif selection == 1:
         instructions()
     elif selection == 2:
+        user_selection()
+    elif selection == 3:
         gameoptions()
     elif selection == 4:
         bulk_loading_option()
@@ -286,6 +288,85 @@ def bulk_loading(archivo):
         for row in reader:
             l.add_backward(row['Usuario'])
             #print(row)
+
+def user_selection():
+    global startlenght, indice
+    stdscr.clear()
+    selection = -1
+    option = 0
+    while selection < 1:
+        stdscr.clear()
+        graphics =[0]*2
+        graphics[option] = curses.A_REVERSE
+        stdscr.addstr(int(dims[0]/2-3), int(dims[1]/2-12),"Usuarios Snake Reloaded ")
+        strings = [l.users(indice),  "Seleccionar usuario"]
+        for z in range(len(strings)):
+            stdscr.addstr(int((dims[0]-len(strings))/2 +z), int((dims[1]-len(strings[z]))/2), strings[z], graphics[z])
+        stdscr.refresh()
+        action = stdscr.getch()
+        if action == curses.KEY_UP:
+            option = (option -1) %2
+        elif action == curses.KEY_DOWN:
+            option = (option + 1) %2
+        elif action == ord('\n'):
+            selection = option
+        elif action == curses.KEY_RIGHT:
+            if option == 0:
+                if indice == int(l.users_len() - 1):
+                    indice = 0
+                else:
+                    indice += 1
+
+        elif action == curses.KEY_LEFT:
+            if option == 0:
+                if indice == 0:
+                    indice = int(l.users_len() - 1)
+                else:
+                    indice -= 1
+
+        if selection < 1:
+            selection = -1
+    menu()
+
+
+"""
+def user_selection2():
+    u = l.get_head()
+    #global startlenght, usuarios , indice
+    stdscr.clear()
+    selection = -1
+    option = 0
+    while selection < 1:
+        stdscr.clear()
+        graphics =[0]*2
+        graphics[option] = curses.A_REVERSE
+        stdscr.addstr(int(dims[0]/2-3), int(dims[1]/2-12),"Usuarios Snake Reloaded ")
+        strings = [u,  "Seleccionar usuario"]
+        for z in range(len(strings)):
+            stdscr.addstr(int((dims[0]-len(strings))/2 +z), int((dims[1]-len(strings[z]))/2), strings[z], graphics[z])
+        stdscr.refresh()
+        action = stdscr.getch()
+        if action == curses.KEY_UP:
+            option = (option -1) %2
+        elif action == curses.KEY_DOWN:
+            option = (option + 1) %2
+        elif action == ord('\n'):
+            selection = option
+        elif action == curses.KEY_RIGHT:
+            if option == 0:
+                #print("D")
+                u = l.get_next()
+
+
+        elif action == curses.KEY_LEFT:
+            if option == 0:
+                #print("A")
+                u = l.get_previous()
+
+        if selection < 1:
+            selection = -1
+    menu()"""
+
 
 def gameoptions():
     global startlenght, growlenght, difficulty, acceleration
