@@ -13,12 +13,12 @@ class DoublyLinkedList:
     #ADD method
     def add(self,node):
         if self.head is None:   #verify if our LinkedList is empty
-            self.head = node    #if is empty assign the first node to our head
+            self.head = node   #if is empty assign the first node to our head
         else:
             temp = self.head
             while temp.next is not None:    #iterate through our list until
                 temp  = temp.next           #-we reach the end of it
-            temp.next = node                #assign the next pointer link of the last element to our new element
+            temp.next = node              #assign the next pointer link of the last element to our new element
             node.previous = temp            #assign the previous pointer link of the new element to our last element
 
     #PRINT method
@@ -45,9 +45,10 @@ class DoublyLinkedList:
             else:
                 print('Error, wrong direction to print list specified')
 
+"""
 list2 = DoublyLinkedList()      #create a new DoubleLinkedList
 list2.add(Node(1))              #add element 1
 list2.add(Node(2))              #add element 2
 list2.add(Node(3))              #add element 3
 list2.print_list('forward')     #print the list forward
-list2.print_list('backward')    #print the list backward
+list2.print_list('backward')    #print the list backward"""

@@ -2,8 +2,11 @@ import curses #import the curses library
 from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN #import special KEYS from the curses library
 import time
 import random
-from Structures.listadoblecircular import CircularDoublyLinkedList
 import csv
+from Structures.listadoblecircular import CircularDoublyLinkedList
+from Structures.listadoble import DoublyLinkedList
+from Structures.listadoble import Node
+
 
 startlenght = 3
 growlenght = 1
@@ -15,22 +18,25 @@ speed ={"Easy": 0.2, "Medium": 0.1, "Hard": 0.05}
 difficulty = "Easy"
 acceleration = False
 l = CircularDoublyLinkedList()
-
+l2 = DoublyLinkedList()
 indice = 0
+u = []
 
 stdscr = curses.initscr() #initialize console
 stdscr.keypad(1)
 dims = stdscr.getmaxyx() #ventana
 
 def game():
+    global u
+    usuario = u[0]
     stdscr.clear()
     stdscr.nodelay(1)
-    head = [1,1]
+    head = [1,3]
     body = [head[:]]*startlenght
 
 
     stdscr.border()
-    stdscr.addstr(0,int(dims[1]/2-11),"User:  Score:0 Nivel:1")
+    stdscr.addstr(0,int(dims[1]/2-11),"User:" +str(usuario)+  " Score:0 Nivel:1")
 
     direction = 0
     gameover = False
@@ -39,8 +45,8 @@ def game():
 
     while not gameover:
 
-        #print(head) coordenadas cabeza de la serpiente
-        #print(body) coordenadas snake
+        #print(head) #coordenadas cabeza de la serpiente
+        #print(body) #coordenadas snake
 
 
         while not foodmade: # food
@@ -98,12 +104,12 @@ def game():
                 if score == 15 and level == 1:
                     difficulty = "Medium"
                     level = level + 1
-                    stdscr.addstr(0,int(dims[1]/2-11),"User:  Score:" +str(score)+" Nivel: "+str(level))
+                    stdscr.addstr(0,int(dims[1]/2-11),"User:"+str(usuario)+ " Score:" +str(score)+" Nivel:"+str(level))
                     stdscr.refresh()
                 elif score == 30 and level == 2:
                     difficulty = "Hard"
                     level = level + 1
-                    stdscr.addstr(0,int(dims[1]/2-11),"User:  Score:" +str(score)+" Nivel: "+str(level))
+                    stdscr.addstr(0,int(dims[1]/2-11),"User:"+str(usuario)+" Score:" +str(score)+" Nivel:"+str(level))
                     stdscr.refresh()
                 elif score == 45:
                     stdscr.clear() # mensaje gamewin
@@ -130,9 +136,12 @@ def game():
                         game()
                     elif q in [77,109]:
                         stdscr.clear()
+                        score = 0
+                        level = 1
+                        difficulty = "Easy"
                         menu()
                 else:
-                    stdscr.addstr(0,int(dims[1]/2-11),"User:  Score:" +str(score)+" Nivel: "+str(level))
+                    stdscr.addstr(0,int(dims[1]/2-11),"User:" +str(usuario)+ " Score:" +str(score)+" Nivel:"+str(level))
                     stdscr.refresh()
 
                 for z in range(growlenght):
@@ -141,7 +150,7 @@ def game():
             elif stdscr.inch(head[0],head[1]) == ord('*') and len(body) > 3:
                 foodmade = False
                 score = score - 1
-                stdscr.addstr(0,int(dims[1]/2-11),"User:  Score:" +str(score)+" Nivel: " +str(level))
+                stdscr.addstr(0,int(dims[1]/2-11),"User:" +str(usuario)+ " Score:" +str(score)+" Nivel:" +str(level))
                 stdscr.refresh()
                 for z in range(growlenght):
                     y=[]
@@ -186,6 +195,12 @@ def game():
                 score = 0
                 level = 1
                 difficulty = "Easy"
+
+                for i in range(len(body)):
+                    l2.add(Node(body[i]))
+
+                l2.print_list("forward")
+
 
         stdscr.move(dims[0]-1, dims[1]-1)
         stdscr.refresh() # refrecar pantalla
@@ -244,11 +259,11 @@ def menu(): # menu snake
         elif action == ord("\n"):
             selection = option
     if selection == 0:
-        game()
+        user_verification()
     elif selection == 1:
         instructions()
     elif selection == 2:
-        user_selection()
+        user_selection_option()
     elif selection == 3:
         gameoptions()
     elif selection == 4:
@@ -281,6 +296,7 @@ def bulk_loading_option():
 
     menu()
 
+
 def bulk_loading(archivo):
     with open(archivo) as csvfile:
         reader = csv.DictReader(csvfile)
@@ -289,8 +305,8 @@ def bulk_loading(archivo):
             l.add_backward(row['Usuario'])
             #print(row)
 
-def user_selection():
-    global startlenght, indice
+def user_selection_option():
+    global startlenght, indice, u
     stdscr.clear()
     selection = -1
     option = 0
@@ -299,6 +315,7 @@ def user_selection():
         graphics =[0]*2
         graphics[option] = curses.A_REVERSE
         stdscr.addstr(int(dims[0]/2-3), int(dims[1]/2-12),"Usuarios Snake Reloaded ")
+        stdscr.addstr(int(dims[0]/2+10), int(dims[1]/2-12),"Presione M para regresar")
         strings = [l.users(indice),  "Seleccionar usuario"]
         for z in range(len(strings)):
             stdscr.addstr(int((dims[0]-len(strings))/2 +z), int((dims[1]-len(strings[z]))/2), strings[z], graphics[z])
@@ -309,6 +326,9 @@ def user_selection():
         elif action == curses.KEY_DOWN:
             option = (option + 1) %2
         elif action == ord('\n'):
+            user_selection(l.users(indice))
+            selection = option
+        elif action in [77,109]:
             selection = option
         elif action == curses.KEY_RIGHT:
             if option == 0:
@@ -328,6 +348,38 @@ def user_selection():
             selection = -1
     menu()
 
+def user_selection(usuario):
+    global u
+    if len(u) == 0:
+        u.append(usuario)
+    else:
+        u.remove(u[0])
+        u.append(usuario)
+    #print(u[0])
+
+def user_create():
+    stdscr.clear()
+    stdscr.nodelay(0)
+    stdscr.addstr(int(dims[0]/2-2), int(dims[1]/2-13),"Ingrese nombre de usuario:")
+    stdscr.addstr(int(dims[0]/2+10), int(dims[1]/2-15),"Presione ENTER para continuar")
+    stdscr.refresh()
+    #stdscr.getch()
+    curses.echo()
+    dato = stdscr.getstr(int(dims[0]/2), int(dims[1]/2-8), 16)
+    usuario = dato.decode("utf-8")
+
+    l.add_backward(usuario)
+    l.print_list_forward()
+    u.append(usuario)
+
+    game()
+
+def user_verification():
+    global u
+    if len(u) == 0:
+        user_create()
+    else:
+        game()
 
 """
 def user_selection2():
