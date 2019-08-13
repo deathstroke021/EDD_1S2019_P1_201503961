@@ -6,6 +6,8 @@ import csv
 from Structures.listadoblecircular import CircularDoublyLinkedList
 from Structures.listadoble import DoublyLinkedList
 from Structures.listadoble import Node
+from Structures.pila import Pila
+from Structures.cola import Cola
 
 
 startlenght = 3
@@ -19,8 +21,13 @@ difficulty = "Easy"
 acceleration = False
 l = CircularDoublyLinkedList()
 l2 = DoublyLinkedList()
+p = Pila(45)
+c = Cola(10)
 indice = 0
 u = []
+v = []
+u2 = []
+s= []
 
 stdscr = curses.initscr() #initialize console
 stdscr.keypad(1)
@@ -57,11 +64,23 @@ def game():
                 if stdscr.inch(y,x) == ord(' '):
                     foodmade = True
                     stdscr.addch(y, x, ord('*'))
+                    #p.push("(" +str(x)+ "," +str(y)+ ")")
+                    if len(v) == 0:
+                        v.append(0)
+                    else:
+                        v.remove(v[0])
+                        v.append(0)
             else:
                 type_food = 1
                 if stdscr.inch(y,x) == ord(' '):
                     foodmade = True
                     stdscr.addch(y, x, ord('+'))
+                    p.push("(" +str(x)+ "," +str(y)+ ")")
+                    if len(v) == 0:
+                        v.append(1)
+                    else:
+                        v.remove(v[0])
+                        v.append(1)
 
 
         if deadcell not in body:
@@ -192,14 +211,37 @@ def game():
                 foodmade = False
             else:
                 gameover = True # terminar juego
-                score = 0
-                level = 1
-                difficulty = "Easy"
 
                 for i in range(len(body)):
                     l2.add(Node(body[i]))
 
                 l2.print_list("forward")
+
+                for i in range(len(body)):
+                    l2.remove()
+
+                if v[0] == 0:
+                    p.vaciar()
+                else:
+                    p.pop()
+                    p.vaciar()
+
+                if c._is_full() == True:
+                    c.dequeue()
+                    c.enqueue("(" + str(usuario) + "," + str(score)+ ")")
+                    u2.remove(u2[0])
+                    s.remove(s[0])
+                    u2.append(usuario)
+                    s.append(score)
+                else:
+                    c.enqueue("(" + str(usuario) + "," + str(score)+ ")")
+                    u2.append(usuario)
+                    s.append(score)
+
+                score = 0
+                level = 1
+                difficulty = "Easy"
+
 
 
         stdscr.move(dims[0]-1, dims[1]-1)
@@ -261,11 +303,11 @@ def menu(): # menu snake
     if selection == 0:
         user_verification()
     elif selection == 1:
-        instructions()
+        scoreboard()
     elif selection == 2:
         user_selection_option()
     elif selection == 3:
-        gameoptions()
+        reports()
     elif selection == 4:
         bulk_loading_option()
 
@@ -380,6 +422,53 @@ def user_verification():
         user_create()
     else:
         game()
+
+def reports():
+    stdscr.clear()
+    selection = -1
+    option = 0
+    while selection < 4:
+        stdscr.clear()
+        graphics =[0]*5
+        graphics[option] = curses.A_REVERSE
+        strings = ["Snake report", "Score report", "Soreboard report", "Users report", "Exit"]
+        for z in range(len(strings)):
+            stdscr.addstr(int((dims[0]-len(strings))/2 +z), int((dims[1]-len(strings[z]))/2), strings[z], graphics[z])
+        stdscr.refresh()
+        action = stdscr.getch()
+        if action == curses.KEY_UP:
+            option = (option -1) %5
+        elif action == curses.KEY_DOWN:
+            option = (option + 1) %5
+        elif action == ord('\n'):
+            selection = option
+        if selection == 0: # cambiar dificultad del juego
+            print("Reporte snake")
+        elif selection == 1:
+            print("Reporte punteo")
+        elif selection == 2:
+            print("Reporte scoreboard")
+            c.vaciar()
+        elif selection == 3:
+            print("Reporte usuarios")
+        if selection < 4:
+            selection = -1
+
+    menu()
+
+def scoreboard():
+    stdscr.clear()
+    stdscr.nodelay(0)
+    stdscr.addstr(int(dims[0]/2-7), int(dims[1]/2-10),"Name")
+    stdscr.addstr(int(dims[0]/2-7), int(dims[1]/2+10),"Score")
+    #lines = ['Use the arrow keys to move', 'Don\'t run into the wall or the snake', '', 'Press Any Key to go Back']
+    for z in range(len(u2)):
+        stdscr.addstr(int((dims[0]-len(u2))/2 +z), int((dims[1])/2-10), u2[z])
+    for y in range(len(s)):
+        stdscr.addstr(int((dims[0]-len(s))/2 +y), int((dims[1])/2+10), str(s[y]))
+    stdscr.refresh()
+    stdscr.getch()
+    menu()
 
 """
 def user_selection2():

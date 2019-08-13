@@ -17,13 +17,13 @@ class Cola:
 
     def enqueue(self, e):
         if self._is_full():
-            raise Exception("Queue overflowed")
+            print("Queue overflowed")
         self.data[self.tail] = e
         self.tail = self._plus_one(self.tail)
 
     def dequeue(self):
         if self._is_empty():
-            raise Exception("Queue underflowed")
+            print("Queue underflowed")
         e = self.data[self.head]
         self.head = self._plus_one(self.head)
         return e
@@ -31,12 +31,19 @@ class Cola:
     def print_queue(self):
         print(self.data)
 
+    def vaciar(self):
+        while self._is_empty() is False:
+            print(self.dequeue())
+
 """
-c = Cola(3)
+c = Cola(10)
 c.enqueue(1)
 c.enqueue(2)
 c.enqueue(3)
 c.print_queue()
-c.dequeue()
-c.dequeue()
-c.dequeue()"""
+#c.dequeue()
+#c.dequeue()
+#c.dequeue()
+print(c._is_full())
+print(c.vaciar())
+"""
