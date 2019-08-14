@@ -115,25 +115,23 @@ class CircularDoublyLinkedList:
             file.write('rankdir=LR;\n')
             aux = self.head
             count = 0
-            while aux:
-                #print(aux.dato,end='')
-                #print('->',end='')
+            while aux.next is not self.head:
                 file.write('node{} [label=\" {} \"  ];\n'.format(count, aux.dato))
                 count+=1
                 file.write('node{} -> node{};\n'.format(count-1, count))
+                file.write('node{} -> node{};\n'.format(count, count-1))
                 aux = aux.next
-                if aux == self.head:
-                    #print(aux.dato)
-                    #file.write('node{} [label=\" {} \"  ];\n'.format(count, aux.dato))
-                    file.write('}')
-                    file.close()
-
-                    break
+            file.write('node{} [label=\" {} \"  ];\n'.format(count, aux.dato))
+            file.write('node{} -> node0;\n'.format(count))
+            file.write('node0 -> node{};\n'.format(count))
+            file.write('}')
+            file.close()
 
             os.system('dot Circulardoublylinkedlist.dot -Tpng -o Circulardoublylinkedlist.png')
-            process = subprocess.Popen(command, stdout=tempFile, shell=True)
-            subprocess.check_call(['open','Circulardoublylinkedlist.png'])
-            print("Se creo el archivo txt correctamente")
+            #subprocess.check_call(['open','Circulardoublylinkedlist.png'])
+            #os.popen("Circulardoublylinkedlist.png")
+            subprocess.Popen("Circulardoublylinkedlist.png",shell=True)
+            #print("Se creo el archivo dot correctamente")
 
 
         """if estado == 0:
@@ -158,12 +156,13 @@ l = CircularDoublyLinkedList()
 l.add_backward("Fernando")
 l.add_backward("Maria")
 l.add_backward("Veronica")
+l.add_backward("Jade")
 #l.bulk_loading("Usuarios.csv")
 l.print_list_forward()
 #l.print_list_backward()
 #print(l.print_head())
 #print(l.print_next())
-#l.graphviz()
+l.graphviz()
 
 print(l.users(0))
 print(l.users_len())

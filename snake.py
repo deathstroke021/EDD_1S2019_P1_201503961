@@ -450,7 +450,8 @@ def reports():
             print("Reporte scoreboard")
             c.vaciar()
         elif selection == 3:
-            print("Reporte usuarios")
+            l.graphviz()
+            #print("Reporte usuarios")
         if selection < 4:
             selection = -1
 
