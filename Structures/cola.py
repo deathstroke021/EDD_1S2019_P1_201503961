@@ -1,3 +1,6 @@
+import os
+import subprocess
+
 class Cola:
 
     def __init__(self, n):
@@ -35,15 +38,38 @@ class Cola:
         while self._is_empty() is False:
             print(self.dequeue())
 
+    def graphviz(self):
+        if self._is_empty() is True:
+            print("cola vacia")
+        else:
+            file = open("Queue.dot", "w")
+            file.write('digraph firsGraph{\n')
+            file.write('node [shape=record];\n')
+            file.write('rankdir=LR;\n')
+            count = 0
+            while self._is_empty() is False:
+                file.write('node{} [label=\" {} \"];\n'.format(count, str(self.dequeue())))
+                count += 1
+                file.write('node{} -> node{};\n'.format(count -1, count))
+            file.write('node{} [label=\" Null \"];\n'.format(count))
+            #file.write('node{} -> node{};\n'.format(count +1, count+2))
+            file.write('}')
+            file.close()
+
+            os.system('dot Queue.dot -Tpng -o Queue.png')
+            #subprocess.check_call(['open','Queue.png'])
+            #os.popen("Queue.png")
+            subprocess.Popen("Queue.png",shell=True)
+            #print("Se creo el archivo dot correctamente")
 """
 c = Cola(10)
 c.enqueue(1)
 c.enqueue(2)
 c.enqueue(3)
-c.print_queue()
+c.graphviz()"""
+#c.print_queue()
 #c.dequeue()
 #c.dequeue()
 #c.dequeue()
-print(c._is_full())
-print(c.vaciar())
-"""
+#print(c._is_full())
+#print(c.vaciar())

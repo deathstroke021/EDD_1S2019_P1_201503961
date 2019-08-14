@@ -1,0 +1,21 @@
+digraph firsGraph{
+node [shape=record];
+rankdir=LR;
+node0 [label=" Null " pos = "0,0!"  ];
+node1 [label=" [29, 46] " pos = "1.2,0!" ];
+node1 -> node2;
+node1 -> node0;
+node2 [label=" [28, 46] " pos = "2.4,0!" ];
+node2 -> node3;
+node2 -> node1;
+node3 [label=" [27, 46] " pos = "3.5999999999999996,0!" ];
+node3 -> node4;
+node3 -> node2;
+node4 [label=" [26, 46] " pos = "4.8,0!" ];
+node4 -> node5;
+node4 -> node3;
+node5 [label=" [25, 46] " pos = "6.0,0!" ];
+node5 -> node4;
+node6 [label=" Null " pos = "7.199999999999999,0!" ];
+node5 -> node6;
+}

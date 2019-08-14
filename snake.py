@@ -28,6 +28,7 @@ u = []
 v = []
 u2 = []
 s= []
+r=[]
 
 stdscr = curses.initscr() #initialize console
 stdscr.keypad(1)
@@ -217,26 +218,31 @@ def game():
 
                 l2.print_list("forward")
 
+                l2.graphviz()
+
                 for i in range(len(body)):
                     l2.remove()
 
                 if v[0] == 0:
-                    p.vaciar()
+                    p.graphviz()
                 else:
                     p.pop()
-                    p.vaciar()
+                    p.graphviz()
 
                 if c._is_full() == True:
                     c.dequeue()
                     c.enqueue("(" + str(usuario) + "," + str(score)+ ")")
                     u2.remove(u2[0])
                     s.remove(s[0])
+                    r.remove(r[0])
                     u2.append(usuario)
                     s.append(score)
+                    r.append("(" + str(usuario) + "," + str(score)+ ")")
                 else:
                     c.enqueue("(" + str(usuario) + "," + str(score)+ ")")
                     u2.append(usuario)
                     s.append(score)
+                    r.append("(" + str(usuario) + "," + str(score)+ ")")
 
                 score = 0
                 level = 1
@@ -431,7 +437,7 @@ def reports():
         stdscr.clear()
         graphics =[0]*5
         graphics[option] = curses.A_REVERSE
-        strings = ["Snake report", "Score report", "Soreboard report", "Users report", "Exit"]
+        strings = ["Snake report", "Score report", "Scoreboard report", "Users report", "Exit"]
         for z in range(len(strings)):
             stdscr.addstr(int((dims[0]-len(strings))/2 +z), int((dims[1]-len(strings[z]))/2), strings[z], graphics[z])
         stdscr.refresh()
@@ -443,12 +449,17 @@ def reports():
         elif action == ord('\n'):
             selection = option
         if selection == 0: # cambiar dificultad del juego
-            print("Reporte snake")
+            l2.show_graphviz()
+            #print("Reporte snake")
         elif selection == 1:
-            print("Reporte punteo")
+            p.show_graphviz()
+            #print("Reporte punteo")
         elif selection == 2:
-            print("Reporte scoreboard")
-            c.vaciar()
+            c.graphviz()
+            for i in range(len(r)):
+                c.enqueue(r[i])
+            #print("Reporte scoreboard")
+
         elif selection == 3:
             l.graphviz()
             #print("Reporte usuarios")

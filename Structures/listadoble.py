@@ -86,14 +86,16 @@ class DoublyLinkedList:
             file.close()
 
             os.system('dot DoublyLinkedList.dot -Kfdp -n -Tpng -o DoublyLinkedList.png')
-            #subprocess.check_call(['open','Circulardoublylinkedlist.png'])
-            #os.popen("Circulardoublylinkedlist.png")
-            subprocess.Popen("DoublyLinkedList.png",shell=True)
             #print("Se creo el archivo dot correctamente")
 
+    def show_graphviz(self):
+        subprocess.Popen("DoublyLinkedList.png",shell=True)
+        #subprocess.check_call(['open','DoublyLinkedList.png'])
+        #os.popen("DoublyLinkedList.png.png")
 
 
 
+"""
 list2 = DoublyLinkedList()      #create a new DoubleLinkedList
 list2.add(Node(1))              #add element 1
 list2.add(Node(2))              #add element 2
@@ -101,7 +103,8 @@ list2.add(Node(3))              #add element 3
 list2.print_list('forward')     #print the list forward
 #list2.print_list('backward')    #print the list backward
 list2.graphviz()
-"""
+list2.show_graphviz()
+
 list2.remove()
 list2.remove()
 list2.print_list('forward')
