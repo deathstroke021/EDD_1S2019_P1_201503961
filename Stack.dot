@@ -1,5 +1,5 @@
 digraph firsGraph{
 node [shape=record];
 rankdir=LR;
-node_A [shape=record    label="|(26,27)|(20,26)"];
+node_A [shape=record    label="|(27,26)|(72,12)|(22,11)"];
 }

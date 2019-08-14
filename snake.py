@@ -65,6 +65,10 @@ def game():
                 if stdscr.inch(y,x) == ord(' '):
                     foodmade = True
                     stdscr.addch(y, x, ord('*'))
+                    if p.empty() is True:
+                        print("pila vacia")
+                    else:
+                        p.pop()
                     #p.push("(" +str(x)+ "," +str(y)+ ")")
                     if len(v) == 0:
                         v.append(0)
